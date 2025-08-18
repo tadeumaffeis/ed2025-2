@@ -34,8 +34,11 @@ public class Node {
 
     public void setInfo(int info) {
         this.info = info;
+    } 
+
+    public String toString()
+    {
+        return "" + this.getInfo();
     }
-    
-    
     
 }

@@ -58,5 +58,33 @@ public class BinaryTree {
         showInOrder(this.root, 2);
         System.out.println(); // só quebra linha
     }
+
+    private boolean isExists(Node root, int key)
+    {
+        if (root == null)
+        {
+            return false;
+        }
+
+        System.out.println("Arvore posquisada: ");
+        this.showInOrder(root, 1);
+
+        if (root.getInfo() == key)
+        {
+            return true;
+        }
+
+        if (root.getInfo() >= key)
+        {
+            return isExists(root.getLeftNode(), key);
+        }
+
+        return isExists(root.getRightNode(), key);
+    }
+
+    public boolean found(int key)
+    {
+        return isExists(this.getRoot(), key);
+    }
 }
 
