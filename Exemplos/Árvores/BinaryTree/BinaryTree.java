@@ -11,33 +11,25 @@ public class BinaryTree {
         return root;
     }
 
-    // Mantém o nome do método
-    public void add(Node root, Node node) {
-        // se a árvore ainda está vazia, define a raiz
-        if (this.root == null) {
-            this.root = node;
-            return;
-        }
+    public void add(Node node) {
+        this.root = add(this.getRoot(), node);
+    }
 
-        // segurança: se por acaso vier root nulo, começa pela raiz real
+    private Node add(Node root, Node node) {
+        // Caso base: inserir o nó
         if (root == null) {
-            add(this.root, node);
-            return;
+            return node;
         }
 
+        // Inserção recursiva
         if (node.getInfo() <= root.getInfo()) {
-            if (root.getLeftNode() == null) {
-                root.setLeftNode(node);
-            } else {
-                add(root.getLeftNode(), node);
-            }
+            root.setLeftNode(add(root.getLeftNode(), node));
         } else {
-            if (root.getRightNode() == null) {
-                root.setRightNode(node);
-            } else {
-                add(root.getRightNode(), node);
-            }
+            root.setRightNode(add(root.getRightNode(), node));
         }
+
+        // Balancear o nó atual
+        return balanceTree(root, node);
     }
 
     private void showInOrder(Node node, int tabs) {
@@ -85,6 +77,67 @@ public class BinaryTree {
     public boolean found(int key)
     {
         return isExists(this.getRoot(), key);
+    }
+
+    private Node balanceTree(Node root, Node node) {
+        if (root == null) {
+            return null;
+        }
+        // Verifica o desequilíbrio e realiza as rotações necessárias
+        int balanceFactor = height(root.getLeftNode()) - height(root.getRightNode());
+        //"\nBalancedFactor: " << balanceFactor << " key: " << key << " root->key: " << root -> key << "\n\n";
+
+        // desbalanceamento à esquerda
+        if (balanceFactor > 1) {
+            if (node.getInfo() <= root.getLeftNode().getInfo()) {
+                root = rotateRight(root); // (LL)
+            } else {
+                root = rotateLeftRight(root); // (LR)
+            }
+        // desbalanceamento à direita
+        } else if (balanceFactor < -1) {
+            if (node.getInfo() > root.getRightNode().getInfo()) {
+                root = rotateLeft(root); // (RR)
+            } else {
+                root = rotateRightLeft(root); // (RL)
+            }
+        }
+        return root;
+    }
+
+// Função para realizar uma rotação simples para a esquerda (LL)
+    private Node rotateLeft(Node root) {
+        Node newRoot = root.getRightNode();
+        root.setRightNode(newRoot.getLeftNode());
+        newRoot.setLeftNode(root);
+        return newRoot;
+    }
+
+// Função para realizar uma rotação simples para a direita (RR)
+    private Node rotateRight(Node root) {
+        Node newRoot = root.getLeftNode();
+        root.setLeftNode(newRoot.getRightNode());
+        newRoot.setRightNode(root);
+        return newRoot;
+    }
+
+// Função para realizar uma rotação dupla à esquerda (LR)
+    private Node rotateLeftRight(Node root) {
+        root.setLeftNode(rotateLeft(root.getLeftNode()));
+        return rotateRight(root);
+    }
+
+// Função para realizar uma rotação dupla à direita (RL)
+    private Node rotateRightLeft(Node root) {
+        root.setRightNode(rotateRight(root.getRightNode()));
+        return rotateLeft(root);
+    }
+
+    public int height(Node root) {
+        if (root == null) {
+            return 0;
+        }
+        return Math.max(height(root.getLeftNode()), height(root.getRightNode())) + 1;
     }
 }
 

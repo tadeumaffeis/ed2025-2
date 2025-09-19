@@ -13,7 +13,7 @@ public class Main {
         for (int i=0; i < 15; i++)
         {
             System.out.print("-> ");
-            btree.add(btree.getRoot(), new Node(in.nextInt()));
+            btree.add(new Node(in.nextInt()));
             btree.show();
         }
                 
