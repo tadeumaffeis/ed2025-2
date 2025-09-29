@@ -139,5 +139,82 @@ public class BinaryTree {
         }
         return Math.max(height(root.getLeftNode()), height(root.getRightNode())) + 1;
     }
+
+    // Remove por chave: atualiza a raiz da árvore
+    public void remove(int key) {
+        this.root = deleteNode(this.root, key);
+    }
+
+    /**
+     * Remove 'key' a partir de 'root' e reequilibra como AVL.
+     * Retorna a nova raiz da (sub)árvore.
+     */
+    public Node deleteNode(Node root, int key) {
+        if (root == null) {
+            return null; // chave não encontrada
+        }
+
+        // Caminha como BST
+        if (key < root.getInfo()) {
+            root.setLeftNode(deleteNode(root.getLeftNode(), key));
+        } else if (key > root.getInfo()) {
+            root.setRightNode(deleteNode(root.getRightNode(), key));
+        } else {
+            // Encontrou o nó a remover
+            if (root.getLeftNode() == null || root.getRightNode() == null) {
+                // 0 ou 1 filho
+                Node child = (root.getLeftNode() != null) ? root.getLeftNode() : root.getRightNode();
+                root = child; // pode virar null (nó folha) ou o único filho
+            } else {
+                // 2 filhos: substitui pelo sucessor (menor da subárvore direita)
+                Node succ = getMin(root.getRightNode());
+                root.setInfo(succ.getInfo());
+                root.setRightNode(deleteNode(root.getRightNode(), succ.getInfo()));
+            }
+        }
+
+        // Se a (sub)árvore ficou vazia após remoção
+        if (root == null) return null;
+
+        // Reequilibra como AVL com base nas alturas dos filhos
+        return rebalance(root);
+    }
+
+    /* ---------- Auxiliares específicos para remoção ---------- */
+
+    // Menor nó (sucessor) de uma subárvore (assume n != null)
+    private Node getMin(Node n) {
+        while (n.getLeftNode() != null) {
+            n = n.getLeftNode();
+        }
+        return n;
+    }
+
+    // Reequilibra o nó 'n' como AVL usando alturas dos filhos
+    private Node rebalance(Node n) {
+        int bf = height(n.getLeftNode()) - height(n.getRightNode());
+
+        // Pesado à esquerda
+        if (bf > 1) {
+            // Se filho esquerdo é Right-heavy, faz rotação dupla (LR)
+            if (height(n.getLeftNode().getRightNode()) > height(n.getLeftNode().getLeftNode())) {
+                n.setLeftNode(rotateLeft(n.getLeftNode()));   // passo L
+            }
+            return rotateRight(n); // passo R (LL ou LR final)
+        }
+
+        // Pesado à direita
+        if (bf < -1) {
+            // Se filho direito é Left-heavy, faz rotação dupla (RL)
+            if (height(n.getRightNode().getLeftNode()) > height(n.getRightNode().getRightNode())) {
+                n.setRightNode(rotateRight(n.getRightNode())); // passo R
+            }
+            return rotateLeft(n); // passo L (RR ou RL final)
+        }
+
+        // Já balanceado
+        return n;
+    }
+
 }
 
