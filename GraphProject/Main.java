@@ -13,13 +13,20 @@ import java.io.UnsupportedEncodingException;
 public class Main {
     public static void main(String[] args) throws UnsupportedEncodingException {
         Graph<String> g = new Graph<>();
+        GraphAdjacencyMatrix<String> matrix = new GraphAdjacencyMatrix<>(6);
 
         g.addVertex("Zé");
+        matrix.addVertex("Zé");
         g.addVertex("João");
+        matrix.addVertex("João");
         g.addVertex("Maria");
+        matrix.addVertex("Maria");
         g.addVertex("Carlos");
+        matrix.addVertex("Carlos");
         g.addVertex("Ana");
+        matrix.addVertex("Ana");
         g.addVertex("Paula");
+        matrix.addVertex("Paula");
         
         g.addEdge("Zé", "João");
         g.addEdge("João", "Maria");
@@ -30,10 +37,23 @@ public class Main {
         g.addEdge("Ana", "João");
         g.addEdge("João", "Ana");
         
+        matrix.setVertex("Zé", "João");
+        matrix.setVertex("João", "Maria");
+        matrix.setVertex("Maria", "Carlos");
+        matrix.setVertex("Carlos", "Ana");
+        matrix.setVertex("Ana", "Paula");
+        matrix.setVertex("Paula", "João");
+        matrix.setVertex("Ana", "João");
+        matrix.setVertex("João", "Ana");
+        
         System.setOut(new java.io.PrintStream(System.out, true, "UTF-8"));
         
         System.out.println("Lista de Adjacência:");
         g.printGraph();
+        
+        System.out.println("Matriz de Adjacência");
+        matrix.printMatrix();
+        matrix.printVertex();
 
         System.out.println();
         g.bfs("Zé");
